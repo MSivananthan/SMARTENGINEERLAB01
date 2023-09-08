@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html> 
+
+<head>  
+   <meta charset="utf-8"/>  
+   <title>Monthly Sales</title> 
+   <script src="ajax_utils.js"></script>
+   <script>
+   		function init() {
+   			ajaxGet("salesData.txt", displayMonthlySales, null);
+   		}
+   		
+   		function displayMonthlySales(reply) {
+   			var jsonStr = reply.responseText;
+   			var salesList = JSON.parse(jsonStr);
+			   			
+			drawBarChart(salesList);   			
+   		}
+   		
+   		function drawBarChart(salesList) {
+   			
+   			var c = document.getElementById("c");
+   			var ctx = c.getContext("2d");
+   			
+   			// starting point coordinates of bar chart 
+   			var xOffset = 100;
+   			var yOffset = 50;
+   			   			
+   			// number of pixels long the bar chart's x-axis is
+   			var xAxisLength = 650;
+
+   			// number of pixels long the bar chart's y-axis is
+   			var yAxisLength = 350;
+   			
+   			// trace x-axis
+			ctx.moveTo(xOffset, yOffset + yAxisLength);
+   			ctx.lineTo(xOffset + xAxisLength, yOffset + yAxisLength);
+   			   			
+   			// trace y-axis
+   			ctx.moveTo(xOffset, yOffset);
+   			ctx.lineTo(xOffset, yOffset + yAxisLength);
+
+   			// draw axes
+   			ctx.stroke(); 
+   			
+   			// set text font for displaying bar chart axis labels
+   			var axisLabelFontSize = 18;
+   			ctx.font = "bold " + axisLabelFontSize + "px sans-serif"; 
+
+   			// set text font size for displaying bar chart data (month and price)
+   			var dataFontSize = 12;
+   			   			
+   			ctx.fillText("SALES", xOffset / 4, yOffset + (yAxisLength / 2));
+   			ctx.fillText("MONTH", xOffset + (xAxisLength / 2), 
+   			yOffset + yAxisLength + axisLabelFontSize + (2 * dataFontSize) );
+   			   			
+   			// draw bar chart axis labels
+   			ctx.stroke();
+   			
+   			// number of pixels wide a bar is 
+   			var barWidth = 30;
+
+   			// number of pixels between bars
+   			var barSpacing = 20;
+   			  
+   			// number of pixels high each $10K is
+   			var barHeightPerThousand = 10;
+   			
+   			// create bar chart
+   			for (var i = 0; i < salesList.length; i++) {
+   			   	var salesEntry = salesList[i];
+   							
+   			   	var month = salesEntry.month;
+   			   	var sales = salesEntry.sales;
+
+				// compute bar height and starting coordinates 
+   				// of upper left corner of bar
+   				var barHeight = sales * barHeightPerThousand;
+   				var barX = xOffset + barSpacing + (i * (barSpacing + barWidth));
+   				var barY = yOffset + yAxisLength - barHeight;
+   							
+   				// draw sales bar
+   				ctx.fillStyle = "blue";
+   				ctx.fillRect(barX, barY, barWidth, barHeight);
+   				ctx.stroke();
+   				
+   				// compute sales amount coordinates and text
+   				var salesOffset = 5;
+   				var salesX = barX + salesOffset;
+   				var salesY = barY - salesOffset;
+   				var salesTxt = sales + "K";
+   								
+   				// draw sales amount label
+   				ctx.font = "bold " + dataFontSize + "px sans-serif"; 
+   				ctx.fillStyle = "black";
+   				ctx.fillText(salesTxt, salesX, salesY);
+   				ctx.stroke();
+   				
+   				// compute month coordinates
+   				var monthOffset = 4;
+   				var monthX = barX + monthOffset;
+   				var monthY = yOffset + yAxisLength + dataFontSize;
+   								
+   				// draw month label
+   				ctx.fillStyle = "red";
+   				ctx.fillText(month, monthX, monthY);
+   				ctx.stroke();
+   			}
+   		}
+   </script>
+</head>
+
+<body onload="init();">  
+   	<canvas id="c" width="750" height="500">
+   		This browser does not support the canvas element.
+	</canvas>
+</body>  
+
+</html> 

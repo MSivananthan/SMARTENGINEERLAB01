@@ -1,0 +1,17 @@
+<html>
+    <head>
+        <script type="text/javascript" src="jquery-1.4.2.min.js"></script>
+        <script type="text/javascript">
+            $(function(){
+                $("p").each(function (index){
+                    $(this).text("Your ID is: "+this.id+" and index: "+index);
+                });
+                $(".highlighted").css("background","yellow");
+            });
+        </script>
+        <body>
+            <p id="p1"></p>
+            <p id="p2" class="highlighted"></p>
+        </body>
+    </head>
+</html>
